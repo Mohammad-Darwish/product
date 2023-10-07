@@ -9,13 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/products")
+@RequestMapping(path = "api/v1/products", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Validated
@@ -27,18 +28,24 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<List<ProductDTO>> addProducts(@Valid @RequestBody List<ProductDTO> productDTOS) {
         List<ProductDTO> createdProducts = productService.addProducts(productDTOS);
-        return new ResponseEntity<>(createdProducts,HttpStatus.CREATED);
+        return new ResponseEntity<>(createdProducts, HttpStatus.CREATED);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ProductDTO> getProductById(@Valid @PathVariable String id){
+    public ResponseEntity<ProductDTO> getProductById(@Valid @PathVariable String id) {
         ProductDTO productByID = productService.getProductByID(id);
         return new ResponseEntity<>(productByID, HttpStatus.OK);
     }
 
-    @GetMapping( params = "productName", produces ={"application/json","application/xml"})
-    public ResponseEntity<List<ProductDTO>> getProductByName(@Valid @RequestParam String productName){
-        List<ProductDTO> productByID = productService.getProductsByName(productName);
-        return new ResponseEntity<>(productByID, HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<List<ProductDTO>> getProducts(@Valid @RequestParam MultiValueMap<String, String> productFilters) {
+        List<ProductDTO> products = productService.getProducts(productFilters);
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<ProductDTO> deleteProduct(@Valid @PathVariable String id) {
+        boolean isDeleted = productService.deleteProductById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

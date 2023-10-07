@@ -1,13 +1,18 @@
 package com.gfsp.product.service;
 
 import com.gfsp.product.dto.ProductDTO;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface ProductService {
     List<ProductDTO> addProducts(List<ProductDTO> productDTOS);
+
     ProductDTO addProduct(ProductDTO productDTO);
+
     ProductDTO getProductByID(String productUUID);
-    List<ProductDTO> getProductsByName(String productName);
+
+    List<ProductDTO> getProducts(MultiValueMap<String, String> productName);
+
+    boolean deleteProductById(String id);
 }

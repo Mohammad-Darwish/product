@@ -1,7 +1,5 @@
 package com.gfsp.product.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gfsp.product.dto.ProductDTO;
 import com.gfsp.product.service.Impl.ProductServiceImp;
@@ -13,16 +11,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static com.gfsp.product.utils.ProductJsonConverter.*;
 import static com.gfsp.product.utils.TestUtils.INVALID_PRODUCT_DTO;
 import static com.gfsp.product.utils.TestUtils.IPHONE_PRODUCT_DTO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,43 +38,16 @@ public class ProductControllerTest {
     @MockBean
     private ProductServiceImp productService;
 
-    private String asString(Object object) {
-        try {
-            return mapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private List<ProductDTO> jsonToListProduct(String json) {
-        List<ProductDTO> list = new ArrayList<>();
-        try {
-            list = mapper.readValue(json, new TypeReference<>() {});
-        } catch (Exception e) {
-            System.out.println("exception " + e);
-        }
-        return list;
-    }
-    private ProductDTO jsonToProduct(String json) {
-        ProductDTO productDTO = new ProductDTO();
-        try {
-            productDTO = mapper.readValue(json, ProductDTO.class);
-        } catch (Exception e) {
-            System.out.println("exception " + e);
-        }
-        return productDTO;
-    }
-
     @Test
     void addProductsCreatedTest() throws Exception {
         Mockito.when(productService.addProducts(List.of(IPHONE_PRODUCT_DTO))).thenReturn(List.of(IPHONE_PRODUCT_DTO));
         MockHttpServletResponse response = mockMvc.perform(post("/api/v1/products")
-                .content(asString(List.of(IPHONE_PRODUCT_DTO)))
+                .content(toStringJson(mapper, List.of(IPHONE_PRODUCT_DTO)))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn().getResponse();
-        List<ProductDTO> result = jsonToListProduct(response.getContentAsString());
+        List<ProductDTO> result = jsonToListProduct(mapper, response.getContentAsString());
         assertEquals(IPHONE_PRODUCT_DTO, result.get(0));
     }
 
@@ -82,30 +55,50 @@ public class ProductControllerTest {
     void addProductsInvalidTest() throws Exception {
         assertThrows(jakarta.servlet.ServletException.class, () -> mockMvc.perform(
             post("/api/v1/products")
-                .content(asString(List.of(INVALID_PRODUCT_DTO)))
+                .content(toStringJson(mapper, List.of(INVALID_PRODUCT_DTO)))
                 .contentType(MediaType.APPLICATION_JSON)));
     }
 
     @Test
-    void getProductByIDValidTest() throws Exception {
+    void getProductByIdTest() throws Exception {
         Mockito.when(productService.getProductByID(IPHONE_PRODUCT_DTO.getId().toString())).thenReturn(IPHONE_PRODUCT_DTO);
         MockHttpServletResponse response = mockMvc.perform(get(String.format("/api/v1/products/%s", IPHONE_PRODUCT_DTO.getId())))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn().getResponse();
-        ProductDTO result = jsonToProduct(response.getContentAsString());
+        ProductDTO result = jsonToProduct(mapper, response.getContentAsString());
         assertEquals(IPHONE_PRODUCT_DTO, result);
     }
 
-
     @Test
     void getProductByNameValidTest() throws Exception {
-        Mockito.when(productService.getProductsByName(IPHONE_PRODUCT_DTO.getProductName())).thenReturn(List.of(IPHONE_PRODUCT_DTO));
-        MockHttpServletResponse response = mockMvc.perform(get(String.format("/api/v1/products/%s", IPHONE_PRODUCT_DTO.getProductName())))
+        // SETUP
+        MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.put("productName", List.of(IPHONE_PRODUCT_DTO.getProductName()));
+        Mockito.when(productService.getProducts(multiValueMap)).thenReturn(List.of(IPHONE_PRODUCT_DTO));
+        String url = String.format("/api/v1/products?productName=%s", IPHONE_PRODUCT_DTO.getProductName());
+
+        //EXECUTE
+        MockHttpServletResponse response = mockMvc.perform(get(url).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn().getResponse();
-        List<ProductDTO> result = jsonToListProduct(response.getContentAsString());
+        List<ProductDTO> result = jsonToListProduct(mapper, response.getContentAsString());
+
+        // ASSERT
         assertEquals(IPHONE_PRODUCT_DTO, result.get(0));
+    }
+
+    @Test
+    void deleteProductByIdTest() throws Exception {
+        Mockito.when(productService.deleteProductById(IPHONE_PRODUCT_DTO.getId().toString())).thenReturn(true);
+        MockHttpServletRequestBuilder requestBuilder =
+            delete(
+                String.format("/api/v1/products/%s", IPHONE_PRODUCT_DTO.getId()))
+                .contentType(MediaType.APPLICATION_JSON
+                );
+
+        mockMvc.perform(requestBuilder)
+            .andExpect(status().isOk());
     }
 }
