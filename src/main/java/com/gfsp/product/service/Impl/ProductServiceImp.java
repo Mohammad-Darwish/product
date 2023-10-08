@@ -2,6 +2,8 @@ package com.gfsp.product.service.Impl;
 
 import com.gfsp.product.dto.ProductDTO;
 import com.gfsp.product.service.ProductService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
@@ -9,6 +11,10 @@ import java.util.List;
 
 @Service
 public class ProductServiceImp implements ProductService {
+
+    @Autowired
+    private ModelMapper mapper;
+
     @Override
     public List<ProductDTO> addProducts(List<ProductDTO> products) {
         return null;
