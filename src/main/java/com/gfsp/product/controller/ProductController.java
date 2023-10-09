@@ -19,9 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(
-    path = "api/v1/products",
-    produces = MediaType.APPLICATION_JSON_VALUE,
-    consumes = MediaType.APPLICATION_JSON_VALUE
+    path = "api/v1/products"
 )
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -37,7 +35,10 @@ public class ProductController {
     @ApiResponse(
         responseCode = "201",
         description = "HTTP status is 201 created")
-    @PostMapping
+    @PostMapping(
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<List<ProductDTO>> addProducts(@Valid @RequestBody
                                                         List<ProductDTO> productDTOS) {
         List<ProductDTO> createdProducts = productService.addProducts(productDTOS);
@@ -50,7 +51,10 @@ public class ProductController {
     @ApiResponse(
         responseCode = "200",
         description = "HTTP status code is 200 okay")
-    @GetMapping("{id}")
+    @GetMapping(
+        path = "{id}",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<ProductDTO> getProductById(@Valid @PathVariable
                                                      String id) {
         ProductDTO productByID = productService.getProductByID(id);
@@ -65,8 +69,10 @@ public class ProductController {
         responseCode = "200",
         description = "HTTP status code is 200 okay"
     )
-    @GetMapping
-    public ResponseEntity<List<ProductDTO>> getProducts(@Valid @RequestParam
+    @GetMapping(
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<ProductDTO>> getProducts(@Valid @RequestParam(required = false)
                                                         MultiValueMap<String, String> productFilters) {
         List<ProductDTO> products = productService.getProducts(productFilters);
         return new ResponseEntity<>(products, HttpStatus.OK);
