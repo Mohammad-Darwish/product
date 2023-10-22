@@ -1,8 +1,9 @@
 package com.gfsp.product.service;
 
 import com.gfsp.product.dto.ProductDTO;
-import org.springframework.util.MultiValueMap;
+import com.gfsp.product.entity.Category;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductService {
@@ -12,7 +13,9 @@ public interface ProductService {
 
     ProductDTO getProductByID(String productUUID);
 
-    List<ProductDTO> getProducts(MultiValueMap<String, String> productName);
+    List<ProductDTO> getProducts(List<Category> category,
+                                 BigDecimal minValue,
+                                 BigDecimal maxValue);
 
-    boolean deleteProductById(String id);
+    void deleteProductById(String id);
 }

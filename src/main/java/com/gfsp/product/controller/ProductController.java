@@ -1,6 +1,7 @@
 package com.gfsp.product.controller;
 
 import com.gfsp.product.dto.ProductDTO;
+import com.gfsp.product.entity.Category;
 import com.gfsp.product.service.Impl.ProductServiceImp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -72,9 +73,10 @@ public class ProductController {
     @GetMapping(
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<ProductDTO>> getProducts(@Valid @RequestParam(required = false)
-                                                        MultiValueMap<String, String> productFilters) {
-        List<ProductDTO> products = productService.getProducts(productFilters);
+    public ResponseEntity<List<ProductDTO>> getProducts(@Valid @RequestParam(required = false) List<Category> category,
+                                                        @Valid @RequestParam(required = false) BigDecimal minValue,
+                                                        @Valid @RequestParam(required = false) BigDecimal maxValue) {
+        List<ProductDTO> products = productService.getProducts(category, minValue, maxValue);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
@@ -89,7 +91,7 @@ public class ProductController {
     @DeleteMapping("{id}")
     public ResponseEntity<ProductDTO> deleteProduct(@Valid @PathVariable
                                                     String id) {
-        boolean isDeleted = productService.deleteProductById(id);
+        productService.deleteProductById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

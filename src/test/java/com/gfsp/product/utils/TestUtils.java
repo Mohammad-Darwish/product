@@ -31,6 +31,18 @@ public class TestUtils {
             new BigDecimal(50),
             100);
 
+    public static Product SAMSUNG_PRODUCT =
+        new Product(UUID.randomUUID(),
+            "Watch 5",
+            "SAMSUNG",
+            LocalDate.parse("2022-10-15"),
+            null,
+            Category.APPLIANCES,
+            "This is a smart watch device",
+            new BigDecimal(200),
+            50);
+
+
     public static ProductDTO IPHONE_PRODUCT_DTO =
         ProductDTO.builder()
             .id(UUID.randomUUID())
@@ -65,5 +77,18 @@ public class TestUtils {
             .description("This shoes is a sporty shoes")
             .price(new BigDecimal(50))
             .quantity(100)
+            .build();
+
+    public static ProductDTO SAMSUNG_PRODUCT_DTO =
+        ProductDTO.builder()
+            .id(UUID.randomUUID())
+            .productName("Watch 5")
+            .brandName("SAMSUNG")
+            .productionDate(LocalDate.parse("2022-10-15"))
+            .expirationDate(null)
+            .category(Category.APPLIANCES)
+            .description("This is a smart watch device")
+            .price(new BigDecimal(200))
+            .quantity(50)
             .build();
 }
