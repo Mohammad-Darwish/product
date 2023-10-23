@@ -1,11 +1,13 @@
 package com.gfsp.product.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,29 +18,28 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Document(collection = "product")
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @Column(nullable = false)
+    @NotNull
     private String productName;
-    @Column(nullable = false)
+    @NotNull
     private String brandName;
-    @Column(nullable = false)
+    @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate productionDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate expirationDate;
-    @Column(nullable = false)
+    @NotNull
     private Category category;
-    @Column(nullable = false)
+    @NotNull
     private String description;
-    @Column(nullable = false)
+    @NotNull
     private BigDecimal price;
-    @Column(nullable = false)
+    @NotNull
     private Integer quantity;
 
     @Override

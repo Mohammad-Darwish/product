@@ -2,6 +2,7 @@ package com.gfsp.product.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gfsp.product.dto.ProductDTO;
+import com.gfsp.product.entity.Category;
 import com.gfsp.product.service.Impl.ProductServiceImp;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -12,8 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
@@ -73,10 +72,8 @@ public class ProductControllerTest {
     @Test
     void getProductByNameValidTest() throws Exception {
         // SETUP
-        MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
-        multiValueMap.put("productName", List.of(IPHONE_PRODUCT_DTO.getProductName()));
-        Mockito.when(productService.getProducts(multiValueMap)).thenReturn(List.of(IPHONE_PRODUCT_DTO));
-        String url = String.format("/api/v1/products?productName=%s", IPHONE_PRODUCT_DTO.getProductName());
+        Mockito.when(productService.getProducts(List.of(Category.APPLIANCES), null, null)).thenReturn(List.of(IPHONE_PRODUCT_DTO));
+        String url = String.format("/api/v1/products?category=%s", IPHONE_PRODUCT_DTO.getCategory());
 
         //EXECUTE
         MockHttpServletResponse response = mockMvc.perform(get(url).contentType(MediaType.APPLICATION_JSON))
@@ -91,7 +88,7 @@ public class ProductControllerTest {
 
     @Test
     void deleteProductByIdTest() throws Exception {
-        Mockito.when(productService.deleteProductById(IPHONE_PRODUCT_DTO.getId().toString())).thenReturn(true);
+        Mockito.when(productService.deleteProductById(IPHONE_PRODUCT_DTO.getId().toString())).thenReturn(IPHONE_PRODUCT_DTO);
         MockHttpServletRequestBuilder requestBuilder =
             delete(
                 String.format("/api/v1/products/%s", IPHONE_PRODUCT_DTO.getId()))

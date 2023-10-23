@@ -1,0 +1,22 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    shutdown:
+      enabled: "true"
+    health:
+      show-details: "always"
+
+
+
+
+#  main:
+#    allow-bean-definition-overriding: true
+spring:
+  data:
+    mongodb:
+      uri: mongodb://root:password@localhost:27017/mydb?authSource=admin
+  datasource:
+    username: root
+    password: password
