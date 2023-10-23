@@ -88,6 +88,7 @@ public class ProductControllerTest {
 
     @Test
     void deleteProductByIdTest() throws Exception {
+        Mockito.when(productService.deleteProductById(IPHONE_PRODUCT_DTO.getId().toString())).thenReturn(IPHONE_PRODUCT_DTO);
         MockHttpServletRequestBuilder requestBuilder =
             delete(
                 String.format("/api/v1/products/%s", IPHONE_PRODUCT_DTO.getId()))

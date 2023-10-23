@@ -17,5 +17,5 @@ public interface ProductService {
                                  BigDecimal minValue,
                                  BigDecimal maxValue);
 
-    void deleteProductById(String id);
+    ProductDTO deleteProductById(String id);
 }

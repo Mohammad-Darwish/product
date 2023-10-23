@@ -97,11 +97,14 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
-    public void deleteProductById(String id) {
+    public ProductDTO deleteProductById(String id) {
+        Product product;
         try {
-            repository.deleteById(UUID.fromString(id));
+            product = repository.findById(UUID.fromString(id)).orElseThrow(IllegalArgumentException::new);
+            repository.delete(product);
         } catch (IllegalArgumentException ex) {
             throw new ResourceNotFoundException(UUID.fromString(id));
         }
+        return mapper.map(product, ProductDTO.class);
     }
 }

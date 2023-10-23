@@ -3,6 +3,7 @@ package com.gfsp.product.service.Impl;
 import com.gfsp.product.dto.ProductDTO;
 import com.gfsp.product.entity.Category;
 import com.gfsp.product.entity.Product;
+import com.gfsp.product.exception.ResourceNotFoundException;
 import com.gfsp.product.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,9 +15,11 @@ import org.modelmapper.ModelMapper;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.gfsp.product.utils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -99,7 +102,13 @@ class ProductServiceImpTest {
     @Test
     void deleteProductByIdTest() {
         // Setup
-        // Execute
+        UUID id = UUID.randomUUID();
+        when(productRepository.findById(id)).thenReturn(Optional.empty());
+        when(productRepository.findById(IPHONE_PRODUCT.getId())).thenReturn(Optional.of(IPHONE_PRODUCT));
+        when(mapper.map(IPHONE_PRODUCT, ProductDTO.class)).thenReturn(IPHONE_PRODUCT_DTO);
+
         // Assert
+        assertThrows(ResourceNotFoundException.class, () -> productServiceImp.deleteProductById(id.toString()));
+        assertEquals(IPHONE_PRODUCT_DTO, productServiceImp.deleteProductById(IPHONE_PRODUCT.getId().toString()));
     }
 }
