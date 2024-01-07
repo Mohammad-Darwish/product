@@ -181,3 +181,5 @@ target
 .gradle
 README.html
 .exercism
+/Swagger UI.html
+/Swagger UI_files/
