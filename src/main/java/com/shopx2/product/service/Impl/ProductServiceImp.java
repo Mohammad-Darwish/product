@@ -1,6 +1,7 @@
 package com.shopx2.product.service.Impl;
 
-import com.shopx2.product.dto.ProductDTO;
+import com.shopx2.product.dto.CreateProductDTO;
+import com.shopx2.product.dto.GetProductDTO;
 import com.shopx2.product.entity.Category;
 import com.shopx2.product.entity.Product;
 import com.shopx2.product.exception.ResourceNotFoundException;
@@ -14,9 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -30,53 +29,29 @@ public class ProductServiceImp implements ProductService {
     private ProductRepository repository;
 
     @Override
-    public List<ProductDTO> addProducts(List<ProductDTO> productsDto) {
-        List<Product> savedProducts = productsDto.stream()
-            .map(productDTO -> mapper.map(productDTO, Product.class))
-            .map(this::saveProduct)
-            .toList();
-        return savedProducts.stream().map(product -> mapper.map(product, ProductDTO.class)).toList();
-    }
-
-    private Product saveProduct(Product product) {
-        Optional<Product> any = repository.findById(product.getId()).stream().findAny();
-        any.ifPresentOrElse(
-            product1 -> {
-                product.setQuantity(product.getQuantity() + product1.getQuantity());
-                repository.save(product);
-            },
-            () -> repository.save(product)
-        );
-        return product;
+    public GetProductDTO addProduct(CreateProductDTO productDTO) {
+        Product product = mapper.map(productDTO, Product.class);
+        Product save = repository.save(product);
+        return mapper.map(save, GetProductDTO.class);
     }
 
     @Override
-    public ProductDTO addProduct(ProductDTO productDTO) {
-        return Stream.ofNullable(productDTO)
-            .map(product -> mapper.map(product, Product.class))
-            .map(this::saveProduct)
-            .map(savedProduct -> mapper.map(savedProduct, ProductDTO.class))
-            .findAny()
-            .orElseThrow();
-    }
-
-    @Override
-    public ProductDTO getProductByID(String productUUID) {
+    public GetProductDTO getProductByID(String productUUID) {
         Product product = repository
             .findById(UUID.fromString(productUUID))
             .orElseThrow();
-        return mapper.map(product, ProductDTO.class);
+        return mapper.map(product, GetProductDTO.class);
     }
 
     @Override
-    public List<ProductDTO> getProducts(List<Category> category,
-                                        BigDecimal minValue,
-                                        BigDecimal maxValue) {
+    public List<GetProductDTO> getProducts(List<Category> category,
+                                           BigDecimal minValue,
+                                           BigDecimal maxValue) {
         return repository.findAll()
             .stream()
             .filter(product -> filterByCategory(product, category))
             .filter(product -> filterByPrice(product, minValue, maxValue))
-            .map(product -> mapper.map(product, ProductDTO.class))
+            .map(product -> mapper.map(product, GetProductDTO.class))
             .toList();
     }
 
@@ -97,7 +72,7 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
-    public ProductDTO deleteProductById(String id) {
+    public GetProductDTO deleteProductById(String id) {
         Product product;
         try {
             product = repository.findById(UUID.fromString(id)).orElseThrow(IllegalArgumentException::new);
@@ -105,6 +80,6 @@ public class ProductServiceImp implements ProductService {
         } catch (IllegalArgumentException ex) {
             throw new ResourceNotFoundException(UUID.fromString(id));
         }
-        return mapper.map(product, ProductDTO.class);
+        return mapper.map(product, GetProductDTO.class);
     }
 }

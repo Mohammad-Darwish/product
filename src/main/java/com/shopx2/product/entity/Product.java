@@ -1,27 +1,27 @@
 package com.shopx2.product.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.UUID;
 
-@Setter
-@Getter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@Document(collection = "product")
+@Entity
 public class Product {
 
     @Id
+    // Since we are not inserting a patch then Identity will work fine, and we don't need sequence.
+    // assign the id to the entity, by DB, at insertion time.
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
     @NotNull
@@ -39,36 +39,4 @@ public class Product {
     private String description;
     @NotNull
     private BigDecimal price;
-    @NotNull
-    private Integer quantity;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Product product = (Product) o;
-
-        return Objects.equals(id, product.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-            "id=" + id +
-            ", productName='" + productName + '\'' +
-            ", brandName='" + brandName + '\'' +
-            ", productionDate=" + productionDate +
-            ", expirationDate=" + expirationDate +
-            ", category=" + category +
-            ", description='" + description + '\'' +
-            ", price=" + price +
-            ", quantity=" + quantity +
-            '}';
-    }
 }

@@ -1,6 +1,7 @@
 package com.shopx2.product.utils;
 
-import com.shopx2.product.dto.ProductDTO;
+import com.shopx2.product.dto.CreateProductDTO;
+import com.shopx2.product.dto.GetProductDTO;
 import com.shopx2.product.entity.Category;
 import com.shopx2.product.entity.Product;
 
@@ -10,85 +11,97 @@ import java.util.UUID;
 
 public class TestUtils {
     public static Product IPHONE_PRODUCT =
-        new Product(UUID.randomUUID(),
+        new Product(
+            UUID.randomUUID(),
             "IPHONE 14",
             "IPHONE",
             LocalDate.parse("2022-05-15"),
             null,
             Category.APPLIANCES,
             "This is a phone device",
-            new BigDecimal(900),
-            200);
+            new BigDecimal(900)
+        );
 
     public static Product SHOES_PRODUCT =
-        new Product(UUID.randomUUID(),
+        new Product(
+            UUID.randomUUID(),
             "shoes",
             "Adidas",
             LocalDate.parse("2020-05-15"),
             null,
             Category.CLOTHES,
             "This shoes is a sporty shoes",
-            new BigDecimal(50),
-            100);
+            new BigDecimal(50)
+        );
 
     public static Product SAMSUNG_PRODUCT =
-        new Product(UUID.randomUUID(),
+        new Product(
+            UUID.fromString("00d41db1-11a9-4168-bd1a-9cab7708b760"),
             "Watch 5",
             "SAMSUNG",
             LocalDate.parse("2022-10-15"),
             null,
             Category.APPLIANCES,
             "This is a smart watch device",
-            new BigDecimal(200),
-            50);
+            new BigDecimal(200)
+        );
 
+    public static CreateProductDTO CREATE_IPHONE_PRODUCT_DTO =
+        new CreateProductDTO(
+            "IPHONE 14",
+            "IPHONE",
+            LocalDate.parse("2022-05-15"),
+            null,
+            Category.APPLIANCES,
+            "This is a phone device",
+            new BigDecimal(900)
+        );
 
-    public static ProductDTO IPHONE_PRODUCT_DTO =
-        ProductDTO.builder()
-            .id(UUID.randomUUID())
-            .productName("IPHONE 14")
-            .brandName("IPHONE")
-            .productionDate(LocalDate.parse("2022-05-15"))
-            .expirationDate(null)
-            .category(Category.APPLIANCES)
-            .description("This is a phone device")
-            .price(new BigDecimal(900))
-            .quantity(200)
-            .build();
+    public static GetProductDTO GET_IPHONE_PRODUCT_DTO =
+        new GetProductDTO(
+            UUID.randomUUID(),
+            "IPHONE 14",
+            "IPHONE",
+            LocalDate.parse("2022-05-15"),
+            null,
+            Category.APPLIANCES,
+            "This is a phone device",
+            new BigDecimal(900)
+        );
 
-    public static ProductDTO INVALID_PRODUCT_DTO =
-        ProductDTO.builder()
-            .id(UUID.randomUUID())
-            .expirationDate(null)
-            .category(Category.APPLIANCES)
-            .description("This is a phone device")
-            .price(new BigDecimal(900))
-            .quantity(200)
-            .build();
+    public static GetProductDTO GET_INVALID_PRODUCT_DTO =
+        new GetProductDTO(
+            UUID.randomUUID(),
+            null,
+            null,
+            LocalDate.parse("2022-05-15"),
+            null,
+            Category.APPLIANCES,
+            "This is a phone device",
+            new BigDecimal(900)
+        );
 
-    public static ProductDTO SHOES_PRODUCT_DTO =
-        ProductDTO.builder()
-            .id(UUID.randomUUID())
-            .productName("shoes")
-            .brandName("Adidas")
-            .productionDate(LocalDate.parse("2020-05-15"))
-            .expirationDate(null)
-            .category(Category.CLOTHES)
-            .description("This shoes is a sporty shoes")
-            .price(new BigDecimal(50))
-            .quantity(100)
-            .build();
+    public static GetProductDTO GET_SHOES_PRODUCT_DTO =
+        new GetProductDTO(
+            UUID.randomUUID(),
+            "shoes",
+            "Adidas",
+            LocalDate.parse("2020-05-15"),
+            null,
+            Category.CLOTHES,
+            "This shoes is a sporty shoes",
+            new BigDecimal(50)
+        );
 
-    public static ProductDTO SAMSUNG_PRODUCT_DTO =
-        ProductDTO.builder()
-            .id(UUID.randomUUID())
-            .productName("Watch 5")
-            .brandName("SAMSUNG")
-            .productionDate(LocalDate.parse("2022-10-15"))
-            .expirationDate(null)
-            .category(Category.APPLIANCES)
-            .description("This is a smart watch device")
-            .price(new BigDecimal(200))
-            .quantity(50)
-            .build();
+    public static GetProductDTO GET_SAMSUNG_PRODUCT_DTO =
+        new GetProductDTO(
+            UUID.randomUUID(),
+            "Watch 5",
+            "SAMSUNG",
+            LocalDate.parse("2022-10-15"),
+            null,
+            Category.APPLIANCES,
+            "This is a smart watch device",
+            new BigDecimal(200)
+        );
 }

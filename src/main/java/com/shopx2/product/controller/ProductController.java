@@ -1,6 +1,7 @@
 package com.shopx2.product.controller;
 
-import com.shopx2.product.dto.ProductDTO;
+import com.shopx2.product.dto.CreateProductDTO;
+import com.shopx2.product.dto.GetProductDTO;
 import com.shopx2.product.entity.Category;
 import com.shopx2.product.service.Impl.ProductServiceImp;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,10 +41,10 @@ public class ProductController {
         produces = MediaType.APPLICATION_JSON_VALUE,
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<ProductDTO>> addProducts(@Valid @RequestBody
-                                                        List<ProductDTO> productDTOS) {
-        List<ProductDTO> createdProducts = productService.addProducts(productDTOS);
-        return new ResponseEntity<>(createdProducts, HttpStatus.CREATED);
+    public ResponseEntity<GetProductDTO> addProducts(@Valid @RequestBody
+                                                     CreateProductDTO productDTO) {
+        GetProductDTO createdProduct = productService.addProduct(productDTO);
+        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
     @Operation(
@@ -56,9 +57,9 @@ public class ProductController {
         path = "{id}",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<ProductDTO> getProductById(@Valid @PathVariable
-                                                     String id) {
-        ProductDTO productByID = productService.getProductByID(id);
+    public ResponseEntity<GetProductDTO> getProductById(@Valid @PathVariable
+                                                        String id) {
+        GetProductDTO productByID = productService.getProductByID(id);
         return new ResponseEntity<>(productByID, HttpStatus.OK);
     }
 
@@ -73,10 +74,10 @@ public class ProductController {
     @GetMapping(
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<ProductDTO>> getProducts(@Valid @RequestParam(required = false) List<Category> category,
-                                                        @Valid @RequestParam(required = false) BigDecimal minValue,
-                                                        @Valid @RequestParam(required = false) BigDecimal maxValue) {
-        List<ProductDTO> products = productService.getProducts(category, minValue, maxValue);
+    public ResponseEntity<List<GetProductDTO>> getProducts(@Valid @RequestParam(required = false) List<Category> category,
+                                                           @Valid @RequestParam(required = false) BigDecimal minValue,
+                                                           @Valid @RequestParam(required = false) BigDecimal maxValue) {
+        List<GetProductDTO> products = productService.getProducts(category, minValue, maxValue);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
@@ -89,9 +90,9 @@ public class ProductController {
         description = "HTTP status code is 200 okay"
     )
     @DeleteMapping("{id}")
-    public ResponseEntity<ProductDTO> deleteProduct(@Valid @PathVariable
-                                                    String id) {
-        ProductDTO productDTO = productService.deleteProductById(id);
+    public ResponseEntity<GetProductDTO> deleteProduct(@Valid @PathVariable
+                                                       String id) {
+        GetProductDTO productDTO = productService.deleteProductById(id);
         return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
 }

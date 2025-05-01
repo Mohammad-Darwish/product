@@ -14,9 +14,13 @@ management:
 #  main:
 #    allow-bean-definition-overriding: true
 spring:
-  data:
-    mongodb:
-      uri: mongodb://root:password@localhost:27017/mydb?authSource=admin
+  jpa:
+    hibernate:
+      ddl-auto: update  # Or "validate", "create", "create-drop"
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
     username: root
     password: password
+    url: jdbc:postgresql://localhost:5432/shopx2
+    driver-class-name: org.postgresql.Driver

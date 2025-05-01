@@ -3,7 +3,7 @@ package com.shopx2.product.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shopx2.product.dto.ProductDTO;
+import com.shopx2.product.dto.GetProductDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +17,8 @@ public class ProductJsonConverter {
         }
     }
 
-    public static List<ProductDTO> jsonToListProduct(ObjectMapper mapper, String json) {
-        List<ProductDTO> list = new ArrayList<>();
+    public static List<GetProductDTO> jsonToListProduct(ObjectMapper mapper, String json) {
+        List<GetProductDTO> list = new ArrayList<>();
         try {
             list = mapper.readValue(json, new TypeReference<>() {
             });
@@ -28,10 +28,10 @@ public class ProductJsonConverter {
         return list;
     }
 
-    public static ProductDTO jsonToProduct(ObjectMapper mapper, String json) {
-        ProductDTO productDTO = new ProductDTO();
+    public static GetProductDTO jsonToProduct(ObjectMapper mapper, String json) {
+        GetProductDTO productDTO = null;
         try {
-            productDTO = mapper.readValue(json, ProductDTO.class);
+            productDTO = mapper.readValue(json, GetProductDTO.class);
         } catch (Exception e) {
             System.out.println("exception " + e);
         }

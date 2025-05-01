@@ -1,7 +1,7 @@
 package com.shopx2.product.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shopx2.product.dto.ProductDTO;
+import com.shopx2.product.dto.GetProductDTO;
 import com.shopx2.product.entity.Category;
 import com.shopx2.product.service.Impl.ProductServiceImp;
 import com.shopx2.product.utils.ProductJsonConverter;
@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,60 +36,47 @@ public class ProductControllerTest {
     private ProductServiceImp productService;
 
     @Test
-    void addProductsCreatedTest() throws Exception {
-        Mockito.when(productService.addProducts(List.of(TestUtils.IPHONE_PRODUCT_DTO))).thenReturn(List.of(TestUtils.IPHONE_PRODUCT_DTO));
-        MockHttpServletResponse response = mockMvc.perform(post("/api/v1/products")
-                .content(ProductJsonConverter.toStringJson(mapper, List.of(TestUtils.IPHONE_PRODUCT_DTO)))
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andReturn().getResponse();
-        List<ProductDTO> result = ProductJsonConverter.jsonToListProduct(mapper, response.getContentAsString());
-        Assertions.assertEquals(TestUtils.IPHONE_PRODUCT_DTO, result.get(0));
-    }
-
-    @Test
-    void addProductsInvalidTest() throws Exception {
-        assertThrows(jakarta.servlet.ServletException.class, () -> mockMvc.perform(
+    void addProductInvalidTest() throws Exception {
+        mockMvc.perform(
             post("/api/v1/products")
-                .content(ProductJsonConverter.toStringJson(mapper, List.of(TestUtils.INVALID_PRODUCT_DTO)))
-                .contentType(MediaType.APPLICATION_JSON)));
+                .content(ProductJsonConverter.toStringJson(mapper, TestUtils.GET_INVALID_PRODUCT_DTO))
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
     }
 
     @Test
     void getProductByIdTest() throws Exception {
-        Mockito.when(productService.getProductByID(TestUtils.IPHONE_PRODUCT_DTO.getId().toString())).thenReturn(TestUtils.IPHONE_PRODUCT_DTO);
-        MockHttpServletResponse response = mockMvc.perform(get(String.format("/api/v1/products/%s", TestUtils.IPHONE_PRODUCT_DTO.getId())))
+        Mockito.when(productService.getProductByID(TestUtils.GET_IPHONE_PRODUCT_DTO.id().toString())).thenReturn(TestUtils.GET_IPHONE_PRODUCT_DTO);
+        MockHttpServletResponse response = mockMvc.perform(get(String.format("/api/v1/products/%s", TestUtils.GET_IPHONE_PRODUCT_DTO.id())))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn().getResponse();
-        ProductDTO result = ProductJsonConverter.jsonToProduct(mapper, response.getContentAsString());
-        Assertions.assertEquals(TestUtils.IPHONE_PRODUCT_DTO, result);
+        GetProductDTO result = ProductJsonConverter.jsonToProduct(mapper, response.getContentAsString());
+        Assertions.assertEquals(TestUtils.GET_IPHONE_PRODUCT_DTO, result);
     }
 
     @Test
     void getProductByNameValidTest() throws Exception {
         // SETUP
-        Mockito.when(productService.getProducts(List.of(Category.APPLIANCES), null, null)).thenReturn(List.of(TestUtils.IPHONE_PRODUCT_DTO));
-        String url = String.format("/api/v1/products?category=%s", TestUtils.IPHONE_PRODUCT_DTO.getCategory());
+        Mockito.when(productService.getProducts(List.of(Category.APPLIANCES), null, null)).thenReturn(List.of(TestUtils.GET_IPHONE_PRODUCT_DTO));
+        String url = String.format("/api/v1/products?category=%s", TestUtils.GET_IPHONE_PRODUCT_DTO.category());
 
         //EXECUTE
         MockHttpServletResponse response = mockMvc.perform(get(url).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn().getResponse();
-        List<ProductDTO> result = ProductJsonConverter.jsonToListProduct(mapper, response.getContentAsString());
+        List<GetProductDTO> result = ProductJsonConverter.jsonToListProduct(mapper, response.getContentAsString());
 
         // ASSERT
-        Assertions.assertEquals(TestUtils.IPHONE_PRODUCT_DTO, result.get(0));
+        Assertions.assertEquals(TestUtils.GET_IPHONE_PRODUCT_DTO, result.get(0));
     }
 
     @Test
     void deleteProductByIdTest() throws Exception {
-        Mockito.when(productService.deleteProductById(TestUtils.IPHONE_PRODUCT_DTO.getId().toString())).thenReturn(TestUtils.IPHONE_PRODUCT_DTO);
+        Mockito.when(productService.deleteProductById(TestUtils.GET_IPHONE_PRODUCT_DTO.id().toString())).thenReturn(TestUtils.GET_IPHONE_PRODUCT_DTO);
         MockHttpServletRequestBuilder requestBuilder =
             delete(
-                String.format("/api/v1/products/%s", TestUtils.IPHONE_PRODUCT_DTO.getId()))
+                String.format("/api/v1/products/%s", TestUtils.GET_IPHONE_PRODUCT_DTO.id()))
                 .contentType(MediaType.APPLICATION_JSON
                 );
 
