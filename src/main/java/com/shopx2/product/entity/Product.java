@@ -1,42 +1,54 @@
 package com.shopx2.product.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+@NoArgsConstructor
 @Data
 @AllArgsConstructor
 @Entity
 public class Product {
 
-    @Id
     // Since we are not inserting a patch then Identity will work fine, and we don't need sequence.
     // assign the id to the entity, by DB, at insertion time.
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //    @GeneratedValue(strategy = GenerationType.AUTO) This work but it does things implicitly so it might change
+    //    with the version of the provider but both works and both java is generating the value not DB
+    @Id
+    @GeneratedValue
+    @UuidGenerator
     private UUID id;
 
-    @NotNull
+    @Column(nullable = false)
     private String productName;
-    @NotNull
+
+    @Column(nullable = false)
     private String brandName;
-    @NotNull
+
+    @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate productionDate;
+
+    @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate expirationDate;
-    @NotNull
+
+    @Column(nullable = false)
     private Category category;
-    @NotNull
+
+    @Column(nullable = false)
     private String description;
-    @NotNull
+
+    @Column(nullable = false)
     private BigDecimal price;
 }

@@ -2,15 +2,14 @@ package com.shopx2.product.service.Impl;
 
 import com.shopx2.product.dto.GetProductDTO;
 import com.shopx2.product.entity.Category;
-import com.shopx2.product.entity.Product;
 import com.shopx2.product.exception.ResourceNotFoundException;
 import com.shopx2.product.repository.ProductRepository;
+import com.shopx2.product.util.ProductMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,7 +28,7 @@ class ProductServiceImpTest {
     private ProductRepository productRepository;
 
     @Mock
-    private ModelMapper mapper;
+    private ProductMapper mapper;
 
     @InjectMocks
     private ProductServiceImp productServiceImp;
@@ -38,8 +37,8 @@ class ProductServiceImpTest {
     void addProductTest() {
         // Setup
         when(productRepository.save(IPHONE_PRODUCT)).thenReturn(IPHONE_PRODUCT);
-        when(mapper.map(CREATE_IPHONE_PRODUCT_DTO, Product.class)).thenReturn(IPHONE_PRODUCT);
-        when(mapper.map(IPHONE_PRODUCT, GetProductDTO.class)).thenReturn(GET_IPHONE_PRODUCT_DTO);
+        when(mapper.mapToProduct(CREATE_IPHONE_PRODUCT_DTO)).thenReturn(IPHONE_PRODUCT);
+        when(mapper.mapToGetProductDTO(IPHONE_PRODUCT)).thenReturn(GET_IPHONE_PRODUCT_DTO);
 
         // Execute
         GetProductDTO addedProduct = productServiceImp.addProduct(CREATE_IPHONE_PRODUCT_DTO);
@@ -52,7 +51,7 @@ class ProductServiceImpTest {
     void getProductByIDTest() {
         // Setup
         when(productRepository.findById(IPHONE_PRODUCT.getId())).thenReturn(Optional.of(IPHONE_PRODUCT));
-        when(mapper.map(IPHONE_PRODUCT, GetProductDTO.class)).thenReturn(GET_IPHONE_PRODUCT_DTO);
+        when(mapper.mapToGetProductDTO(IPHONE_PRODUCT)).thenReturn(GET_IPHONE_PRODUCT_DTO);
 
         // Execute
         GetProductDTO productByID = productServiceImp.getProductByID(IPHONE_PRODUCT.getId().toString());
@@ -65,8 +64,8 @@ class ProductServiceImpTest {
     void getProductsTest() {
         // Setup
         when(productRepository.findAll()).thenReturn(List.of(IPHONE_PRODUCT, SAMSUNG_PRODUCT, SHOES_PRODUCT));
-        when(mapper.map(IPHONE_PRODUCT, GetProductDTO.class)).thenReturn(GET_IPHONE_PRODUCT_DTO);
-        when(mapper.map(SAMSUNG_PRODUCT, GetProductDTO.class)).thenReturn(GET_SAMSUNG_PRODUCT_DTO);
+        when(mapper.mapToGetProductDTO(IPHONE_PRODUCT)).thenReturn(GET_IPHONE_PRODUCT_DTO);
+        when(mapper.mapToGetProductDTO(SAMSUNG_PRODUCT)).thenReturn(GET_SAMSUNG_PRODUCT_DTO);
 
         Category applianceCategory = Category.APPLIANCES;
         BigDecimal minValue = new BigDecimal(15);
@@ -87,7 +86,7 @@ class ProductServiceImpTest {
         UUID id = UUID.randomUUID();
         when(productRepository.findById(id)).thenReturn(Optional.empty());
         when(productRepository.findById(IPHONE_PRODUCT.getId())).thenReturn(Optional.of(IPHONE_PRODUCT));
-        when(mapper.map(IPHONE_PRODUCT, GetProductDTO.class)).thenReturn(GET_IPHONE_PRODUCT_DTO);
+        when(mapper.mapToGetProductDTO(IPHONE_PRODUCT)).thenReturn(GET_IPHONE_PRODUCT_DTO);
 
         // Assert
         assertThrows(ResourceNotFoundException.class, () -> productServiceImp.deleteProductById(id.toString()));

@@ -7,9 +7,9 @@ import com.shopx2.product.entity.Product;
 import com.shopx2.product.exception.ResourceNotFoundException;
 import com.shopx2.product.repository.ProductRepository;
 import com.shopx2.product.service.ProductService;
+import com.shopx2.product.util.ProductMapper;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +23,16 @@ import java.util.UUID;
 public class ProductServiceImp implements ProductService {
 
     @Autowired
-    private ModelMapper mapper;
+    private ProductMapper mapper;
 
     @Autowired
     private ProductRepository repository;
 
     @Override
     public GetProductDTO addProduct(CreateProductDTO productDTO) {
-        Product product = mapper.map(productDTO, Product.class);
+        Product product = mapper.mapToProduct(productDTO);
         Product save = repository.save(product);
-        return mapper.map(save, GetProductDTO.class);
+        return mapper.mapToGetProductDTO(save);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ProductServiceImp implements ProductService {
         Product product = repository
             .findById(UUID.fromString(productUUID))
             .orElseThrow();
-        return mapper.map(product, GetProductDTO.class);
+        return mapper.mapToGetProductDTO(product);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ProductServiceImp implements ProductService {
             .stream()
             .filter(product -> filterByCategory(product, category))
             .filter(product -> filterByPrice(product, minValue, maxValue))
-            .map(product -> mapper.map(product, GetProductDTO.class))
+            .map(product -> mapper.mapToGetProductDTO(product))
             .toList();
     }
 
@@ -80,6 +80,6 @@ public class ProductServiceImp implements ProductService {
         } catch (IllegalArgumentException ex) {
             throw new ResourceNotFoundException(UUID.fromString(id));
         }
-        return mapper.map(product, GetProductDTO.class);
+        return mapper.mapToGetProductDTO(product);
     }
 }

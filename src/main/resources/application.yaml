@@ -16,7 +16,7 @@ management:
 spring:
   jpa:
     hibernate:
-      ddl-auto: update  # Or "validate", "create", "create-drop"
+      ddl-auto: update  # Or "validate", "create", "create-drop"  // Only through Dev not recommended in Prod, update manually in Prod
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
