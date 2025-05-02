@@ -1,10 +1,7 @@
 package com.shopx2.product.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,7 +40,8 @@ public class Product {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate expirationDate;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false, columnDefinition = "SMALLINT")
     private Category category;
 
     @Column(nullable = false)
