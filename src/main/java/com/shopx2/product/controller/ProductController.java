@@ -7,9 +7,7 @@ import com.shopx2.product.service.Impl.ProductServiceImp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +21,11 @@ import java.util.List;
 @RequestMapping(
     path = "api/v1/products"
 )
-@AllArgsConstructor
 @RequiredArgsConstructor
 @Validated
 public class ProductController {
 
-    @Autowired
-    private ProductServiceImp productService;
+    private final ProductServiceImp productService;
 
     @Operation(
         summary = "ADD products rest API",
